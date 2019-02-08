@@ -9,5 +9,8 @@
         <module name="sshutils" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sshutils" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
