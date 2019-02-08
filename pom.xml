@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.paulushc</groupId>
-    <artifactId>sshutils</artifactId>
-    <version>1.0.0</version>
+    <artifactId>sshutil</artifactId>
+    <version>1.0.1</version>
 
     <name>SSH Utils Library</name>
     <description>This lib is a set of utils to help you during ssh connections</description>
@@ -64,8 +64,7 @@
 
     <distributionManagement>
         <repository>
-            <id>bintray-paulushc-com</id>
-            <name>paulushc-com</name>
+            <id>bintray-paulushc-org.paulushc</id>
             <url>https://api.bintray.com/maven/paulushc/${project.groupId}/${project.artifactId}/;publish=1</url>
         </repository>
     </distributionManagement>
