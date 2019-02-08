@@ -1,0 +1,95 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+
+      - run:
+          name: Dependencies Checking
+          command: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+
+      - run:
+          name: Dependencies Checking
+          command: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - run: mvn package -DskipTests
+
+  deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: Upload Artficact to Bintray
+          command: |
+            mvn ${MAVEN_CLI_OPTS} versions:set -DnewVersion="${CIRCLE_TAG}"'
+            mvn ${MAVEN_CLI_OPTS} versions:commit'
+            mvn package javadoc:jar source:jar deploy --settings settings_bintray.xml -Dinternal.repo.username=${BINTRAY_USERNAME} -Dinternal.repo.pwd=${BINTRAY_PASSWORD}
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^([0-9])\.([0-9])+\.([0-9])+/
+              ignore: /^v.*/
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^([0-9])\.([0-9])+\.([0-9])+/
+              ignore: /^v.*/
