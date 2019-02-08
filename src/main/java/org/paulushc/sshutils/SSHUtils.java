@@ -3,7 +3,6 @@ package org.paulushc.sshutils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class SSHUtils {
 
@@ -24,18 +23,28 @@ public class SSHUtils {
 				.host(host)
 				.port(port)
 			.build();
+		return fileExist(ssh,destination);
+	}
+
+	/**
+	 * Check if a specific file exist in remote server
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param destination file path to be checked
+	 * @return true if exists, false if not
+	 */
+	public static boolean fileExist(ShellConnectionStream ssh, String destination){
 		try{
 			ssh.connect();
 			if(ssh.isReady()) {
-				String retorno = ssh.write("[ -f " + destination +" ]  && echo 1 || echo 0 ");
+				String returnValue = ssh.write("[ -f " + destination +" ]  && echo 1 || echo 0 ");
 				ssh.close();
-				if(retorno != null){
-					retorno = retorno.replace("\n", "");
-					return  Long.parseLong(retorno) > 0;
+				if(returnValue != null){
+					returnValue = returnValue.replace("\n", "");
+					return  Long.parseLong(returnValue) > 0;
 				}
 				return false;
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
+		}catch(Exception e){ e.printStackTrace(); }
 		return false;
 	}
 
@@ -52,8 +61,6 @@ public class SSHUtils {
      */
 	public static boolean uploadTo(String username,String password, String host, int port,String destination,String destinationDirectory, String originFilePath){
 
-        makeDir(username, password, host, port, destinationDirectory);
-
 		ShellConnectionStream ssh = ShellConnectionStream.builder()
 				.username(username)
 				.password(password)
@@ -61,17 +68,30 @@ public class SSHUtils {
 				.port(port)
 				.build();
 
+        makeDir(ssh, destinationDirectory);
+		return uploadTo(destination, destinationDirectory, originFilePath, ssh);
+	}
+
+	/**
+	 * Upload a local file to a remote location
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param destination remote file path
+	 * @param destinationDirectory remote folder
+	 * @param originFilePath local file path
+	 * @return true if manage to upload, false if don't
+	 */
+	public static boolean uploadTo(String destination, String destinationDirectory, String originFilePath, ShellConnectionStream ssh) {
 		try{
 			ssh.connect();
 			if(ssh.isReady() && ssh.upload(originFilePath,destination, destinationDirectory)){
                 ssh.close();
                 return true;
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
+		}catch(Exception e){ e.printStackTrace(); }
 		return false;
 	}
 
-    /**
+	/**
      * Upload a list of files to a specific location
      * @param username Username to connect
      * @param password password of user
@@ -83,14 +103,25 @@ public class SSHUtils {
      */
 	public static boolean uploadTo(String username,String password, String host, int port,String destinationDirectory, List<String> files){
 
-        makeDir(username, password, host, port, destinationDirectory);
-
         ShellConnectionStream ssh = ShellConnectionStream.builder()
                 .username(username)
                 .password(password)
                 .host(host)
                 .port(port)
             .build();
+
+		return uploadTo(destinationDirectory, files, ssh);
+	}
+
+	/**
+	 * Upload a list of files to a specific location
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param destinationDirectory a remote directory to save all files
+	 * @param files a list of file paths
+	 * @return true if manage to upload, false if don't
+	 */
+	public static boolean uploadTo(String destinationDirectory, List<String> files, ShellConnectionStream ssh) {
+		makeDir(ssh, destinationDirectory);
 
 		try{
 			ssh.connect();
@@ -104,11 +135,11 @@ public class SSHUtils {
 				ssh.close();
 				return true;
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
+		}catch(Exception e){ e.printStackTrace(); }
 		return false;
 	}
 
-    /**
+	/**
      * Create a directory on remote server
      * @param username Username to connect
      * @param password password of user
@@ -124,17 +155,26 @@ public class SSHUtils {
                 .port(port)
             .build();
 
+		makeDir(ssh, destinationDirectory);
+
+	}
+
+	/**
+	 * Create a directory on remote server
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param destinationDirectory full path to be created into remote server
+	 */
+	public static void makeDir(ShellConnectionStream ssh, String destinationDirectory) {
 		try{
 			ssh.connect();
 			if(ssh.isReady()) {
 				ssh.write("mkdir -p " + destinationDirectory);
 				ssh.close();
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
-		
+		}catch(Exception e){ e.printStackTrace(); }
 	}
 
-    /**
+	/**
      * Rename a remote file
      * @param username Username to connect
      * @param password password of user
@@ -150,6 +190,17 @@ public class SSHUtils {
                 .host(host)
                 .port(port)
             .build();
+		renameFile(originalFilePath, destinationFilePath, ssh);
+
+	}
+
+	/**
+	 * Rename a remote file
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param originalFilePath original path to file
+	 * @param destinationFilePath new location or name of remote file
+	 */
+	public static void renameFile(String originalFilePath, String destinationFilePath, ShellConnectionStream ssh) {
 		try{
 			ssh.connect();
 			if(ssh.isReady()) {
@@ -157,11 +208,10 @@ public class SSHUtils {
 				ssh.write("mv " + originalFilePath + " " + destinationFilePath);
 				ssh.close();
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
-		
+		}catch(Exception e){ e.printStackTrace(); }
 	}
 
-    /**
+	/**
      * Delete a file from the remote server
      * @param username Username to connect
      * @param password password of user
@@ -176,24 +226,33 @@ public class SSHUtils {
                 .host(host)
                 .port(port)
             .build();
+		deleteFile(remoteFilePath, ssh);
+
+	}
+
+	/**
+	 * Delete a file from the remote server
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param remoteFilePath Remote location to file that needs to be removed
+	 */
+	public static void deleteFile(String remoteFilePath, ShellConnectionStream ssh) {
 		try{
 			ssh.connect();
 			if(ssh.isReady()) {
 				ssh.write("rm -f " + remoteFilePath);
 				ssh.close();
 			}
-		}catch(Exception e){ e.printStackTrace(); }		
-		
+		}catch(Exception e){ e.printStackTrace(); }
 	}
 
 	/**
-	 *
+	 * List a content of a remote folder
 	 * @param username Username to connect
 	 * @param password password of user
 	 * @param host host to connect to
 	 * @param port host port
 	 * @param remoteFilePath Remote location to file that needs to be removed
-	 * @return A list of files to
+	 * @return A list of files from that specific folder
 	 */
 	public static List<String> listContent(String username,String password, String host, int port, String remoteFilePath){
 		ShellConnectionStream ssh = ShellConnectionStream.builder()
@@ -203,6 +262,16 @@ public class SSHUtils {
 				.port(port)
 				.build();
 
+		return listContent(remoteFilePath, ssh);
+	}
+
+	/**
+	 * List a content of a remote folder
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param remoteFilePath Remote location to file that needs to be removed
+	 * @return A list of files from that specific folder
+	 */
+	public static List<String> listContent(String remoteFilePath, ShellConnectionStream ssh) {
 		List<String> contentList = new ArrayList<>();
 		try{
 			ssh.connect();
@@ -215,5 +284,5 @@ public class SSHUtils {
 
 		return contentList;
 	}
-	
+
 }

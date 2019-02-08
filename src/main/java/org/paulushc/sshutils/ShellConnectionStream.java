@@ -28,6 +28,8 @@ public class ShellConnectionStream {
 	String password;
 	String host;
 	int port = 22;
+	String publicKeyPath;
+	String publicKeyPassphrase;
 
 	/**
 	 * Connect to host with a timeout of 30 seconds and skipping host key check
@@ -38,9 +40,17 @@ public class ShellConnectionStream {
 
 		try {
 			this.ssh = new JSch();
-			
 			session = ssh.getSession(this.username, this.host, this.port);
-			session.setPassword(this.password);
+
+			if(this.publicKeyPath != null && !this.publicKeyPath.isEmpty()){
+				if(this.publicKeyPassphrase != null && !this.publicKeyPassphrase.isEmpty())
+					this.ssh.addIdentity(this.publicKeyPath,this.publicKeyPassphrase);
+				else
+					this.ssh.addIdentity(this.publicKeyPath);
+			}else {
+				session.setPassword(this.password);
+			}
+
 			session.setConfig("StrictHostKeyChecking", "no");
 			session.connect(30000);
 			this.session = session;
