@@ -1,6 +1,9 @@
 package org.paulushc.sshutils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class SSHUtils {
 
@@ -181,6 +184,36 @@ public class SSHUtils {
 			}
 		}catch(Exception e){ e.printStackTrace(); }		
 		
+	}
+
+	/**
+	 *
+	 * @param username Username to connect
+	 * @param password password of user
+	 * @param host host to connect to
+	 * @param port host port
+	 * @param remoteFilePath Remote location to file that needs to be removed
+	 * @return A list of files to
+	 */
+	public static List<String> listContent(String username,String password, String host, int port, String remoteFilePath){
+		ShellConnectionStream ssh = ShellConnectionStream.builder()
+				.username(username)
+				.password(password)
+				.host(host)
+				.port(port)
+				.build();
+
+		List<String> contentList = new ArrayList<>();
+		try{
+			ssh.connect();
+			if(ssh.isReady()) {
+				String contentListAsString = ssh.write("find " + remoteFilePath + " -maxdepth 1");
+				ssh.close();
+				contentList.addAll(Arrays.asList(contentListAsString.split("\n")));
+			}
+		}catch(Exception e){ e.printStackTrace(); }
+
+		return contentList;
 	}
 	
 }

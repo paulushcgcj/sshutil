@@ -37,6 +37,7 @@ public class ShellConnectionStream {
 	public boolean connect() throws JSchException {
 
 		try {
+			this.ssh = new JSch();
 			
 			session = ssh.getSession(this.username, this.host, this.port);
 			session.setPassword(this.password);
