@@ -4,4 +4,4 @@ This library is intended to be used as an example when using jsch. It's part of 
 
 The idea is only to show how can you build up a library that suits your needs when connecting to remote servers, be it for upload/download or to execute commands. If you find this lib useful, you can contribute to it, or even use it, as it will be released on maven central and bintray as well.
 
-This code is just a draft example of how to use [jsch](http://www.jcraft.com/jsch/) inside your project, so don't expect nothing complex or ultra secure as this is just a draft example.
+This code is just a draft example of how to use [jsch](http://www.jcraft.com/jsch/) inside your project, so don't expect nothing complex or ultra secure as this is just a draft example. If you want more complex examples, check out [jsch examples page](http://www.jcraft.com/jsch/examples/)

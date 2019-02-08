@@ -251,7 +251,7 @@ public class SSHUtils {
 	 * @param password password of user
 	 * @param host host to connect to
 	 * @param port host port
-	 * @param remoteFilePath Remote location to file that needs to be removed
+	 * @param remoteFilePath Remote location to folder
 	 * @return A list of files from that specific folder
 	 */
 	public static List<String> listContent(String username,String password, String host, int port, String remoteFilePath){
@@ -268,7 +268,7 @@ public class SSHUtils {
 	/**
 	 * List a content of a remote folder
 	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
-	 * @param remoteFilePath Remote location to file that needs to be removed
+	 * @param remoteFilePath Remote location to folder
 	 * @return A list of files from that specific folder
 	 */
 	public static List<String> listContent(String remoteFilePath, ShellConnectionStream ssh) {
@@ -285,4 +285,46 @@ public class SSHUtils {
 		return contentList;
 	}
 
+	/**
+	 * Download a remote file
+	 * @param username Username to connect
+	 * @param password password of user
+	 * @param host host to connect to
+	 * @param port host port
+	 * @param remoteFilePath Remote location to file that will be downloaded
+	 * @param localFilePath Path to save the local file
+	 * @return true in case of success download, false if didn't
+	 */
+	public static boolean downloadFile(String username,String password, String host, int port, String remoteFilePath,String localFilePath){
+
+		ShellConnectionStream ssh = ShellConnectionStream.builder()
+				.username(username)
+				.password(password)
+				.host(host)
+				.port(port)
+				.build();
+
+		return downloadFile(remoteFilePath, localFilePath, ssh);
+	}
+
+	/**
+	 * Download a remote file
+	 * @param ssh The {@link ShellConnectionStream} object with the connection data set
+	 * @param remoteFilePath Remote location to file that will be downloaded
+	 * @param localFilePath Path to save the local file
+	 * @return true in case of success download, false if didn't
+	 */
+	public static boolean downloadFile(String remoteFilePath, String localFilePath, ShellConnectionStream ssh) {
+		boolean downloadedFile = false;
+
+		try{
+			ssh.connect();
+			if(ssh.isReady()) {
+				downloadedFile = ssh.download(remoteFilePath,localFilePath);
+				ssh.close();
+			}
+		}catch(Exception e){ e.printStackTrace(); }
+
+		return downloadedFile;
+	}
 }

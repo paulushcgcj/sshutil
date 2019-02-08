@@ -169,16 +169,20 @@ public class ShellConnectionStream {
 	}
 
 	public boolean download(String arquivoRemoto, String arquivoLocal){
-		
-		try {			
-			ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");			
-			sftp.connect();						
-			sftp.get(arquivoRemoto, arquivoLocal);			
-			sftp.disconnect();
-			return true;
-				
-		} catch (Exception e) {
-			e.printStackTrace();
+
+		if(prepareUpload(arquivoLocal)) {
+
+			try {
+				ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
+				sftp.connect();
+				sftp.get(arquivoRemoto, arquivoLocal);
+				sftp.disconnect();
+				return true;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 		return false;
 	}
