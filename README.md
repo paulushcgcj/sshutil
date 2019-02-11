@@ -1,5 +1,8 @@
 # SSH Utils Example Library
 
+[![CodeFactor](https://www.codefactor.io/repository/github/paulushcgcj/sshutil/badge?style=flat-square)](https://www.codefactor.io/repository/github/paulushcgcj/sshutil)
+[![Build Status](https://travis-ci.com/paulushcgcj/sshutil.svg?branch=master)](https://travis-ci.com/paulushcgcj/sshutil)
+
 This library is intended to be used as an example when using jsch. It's part of the article about SSH and Java that I wrote on Medium on [en-US](https://medium.com/@paulushc/secure-shell-ssh-and-java-3bb380050d4b) and  [pt-BR](https://medium.com/@paulushc/secure-shell-ssh-e-java-d47c10996256). You can also find it on [my blog](https://paulushcgcj.github.io/article/tech/java/ssh/2016/11/09/secure-shell-and-java.html)
 
 The idea is only to show how can you build up a library that suits your needs when connecting to remote servers, be it for upload/download or to execute commands. If you find this lib useful, you can contribute to it, or even use it, as it will be released on maven central and bintray as well.
