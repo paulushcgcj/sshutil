@@ -7,9 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sshutils" />
+        <module name="sshutil" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="sshutil" target="8" />
       <module name="sshutils" target="8" />
     </bytecodeTargetLevel>
   </component>

@@ -1,4 +1,4 @@
-package org.paulushc.sshutils;
+package io.github.paulushcgcj.sshutils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

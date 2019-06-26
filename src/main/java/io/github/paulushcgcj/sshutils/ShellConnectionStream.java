@@ -1,4 +1,4 @@
-package org.paulushc.sshutils;
+package io.github.paulushcgcj.sshutils;
 
 import java.io.BufferedReader;
 import java.io.File;

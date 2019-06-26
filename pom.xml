@@ -4,13 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.paulushc</groupId>
+    <groupId>io.github.paulushcgcj</groupId>
     <artifactId>sshutil</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.0</version>
 
     <name>SSH Utils Library</name>
     <description>This lib is a set of utils to help you during ssh connections</description>
-    <url>https://github.com/paulushcgcj/sshutil</url>
+    <url>https://paulushcgcj.github.io/</url>
+    <organization>
+        <name>Paulo Gomes da Cruz Junior</name>
+        <url>https://paulushcgcj.github.io/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+            <url>https://raw.githubusercontent.com/paulushcgcj/sshutil/master/LICENSE.md</url>
+        </license>
+    </licenses>
+
     <developers>
         <developer>
             <id>paulo</id>
@@ -21,7 +33,6 @@
             </roles>
         </developer>
     </developers>
-
 
     <properties>
         <java.version>1.8</java.version>
@@ -69,15 +80,16 @@
     </build>
 
     <scm>
-        <connection>scm:git:origin</connection>
-        <developerConnection>scm:git:origin</developerConnection>
-        <url>https://github.com/paulushcgcj/sshutil.git</url>
+        <connection>scm:git:${project.scm.url}</connection>
+        <developerConnection>scm:git:${project.scm.url}</developerConnection>
+        <url>git@github.com:paulushcgcj/sshutil.git</url>
     </scm>
 
     <distributionManagement>
         <repository>
-            <id>bintray-paulushc-org.paulushc</id>
-            <url>https://api.bintray.com/maven/paulushc/${project.groupId}/${project.artifactId}/;publish=1</url>
+            <id>bintray-paulushc-io.github.paulushcgcj</id>
+            <name>paulushc-io.github.paulushcgcj</name>
+            <url>https://api.bintray.com/maven/paulushc/io.github.paulushcgcj/sshutil/;publish=1</url>
         </repository>
     </distributionManagement>
 
