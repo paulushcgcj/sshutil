@@ -25,19 +25,26 @@
 
     <developers>
         <developer>
-            <id>paulo</id>
             <name>Paulo Gomes da Cruz Junior</name>
             <email>paulushc@gmail.com</email>
-            <roles>
-                <role>project lead</role>
-            </roles>
+            <organization>PaulusHC</organization>
+            <organizationUrl>https://paulushcgcj.github.io/</organizationUrl>
         </developer>
     </developers>
 
     <properties>
-        <java.version>1.8</java.version>
+        <maven.version>3.3.9</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <jdk.version>1.8</jdk.version>
+        <build.profile.id>dev</build.profile.id>
+        <jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec
+        </jacoco.it.execution.data.file>
+        <jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec
+        </jacoco.ut.execution.data.file>
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
     </properties>
 
     <dependencies>
