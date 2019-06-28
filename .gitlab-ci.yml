@@ -1,8 +1,8 @@
-image: maven:3.3.9-jdk-8
+image: paulushc/maven-jdk8-alpine
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
-  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode --errors --fail-at-end --show-version -DdmUser=$MAVEN_REPO_USER -DdmPass=$MAVEN_REPO_PASS -Dsonar.login=$SONAR_TOKEN"
+  MAVEN_CLI_OPTS: "-s maven-settings.xml --batch-mode --errors --fail-at-end --show-version -DdmUser=$MAVEN_REPO_USER -DdmPass=$MAVEN_REPO_PASS -Dsonar.login=$SONAR_TOKEN -Dgpg.keyname=$REPO_GPGKEYNAME"
 
 cache:
   paths:
@@ -14,6 +14,13 @@ stages:
   - build
   - artifact
   - deploy
+
+before_script:
+  - 'export GPG_TTY=$(tty)'
+  - 'gpg --batch --import $GPG_PUB_FL'
+  - 'gpg --batch --import $GPG_SEC_FL'
+  - 'rm -rf maven-settings.xml'
+  - 'echo $M2_FILE > maven-settings.xml'
 
 validate:
   stage: validate
