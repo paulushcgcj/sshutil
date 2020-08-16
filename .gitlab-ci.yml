@@ -28,6 +28,7 @@ validate:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS validate'
   except:
     - tags
+  needs: []
 
 compile:
   stage: validate
@@ -35,6 +36,7 @@ compile:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS clean compile'
   except:
     - tags
+  needs: ["validate"]
 
 check-style:
   stage: validate
@@ -47,6 +49,7 @@ check-style:
     paths:
       - target/site/checkstyle.html
     expire_in: 4 days
+  needs: ["compile"]
 
 unit-test:
   stage: test
@@ -54,6 +57,7 @@ unit-test:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS test'
   except:
     - tags
+  needs: ["compile","check-style"]
 
 integration-test:
   stage: test
@@ -61,6 +65,7 @@ integration-test:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS verify -P integration-test'
   except:
     - tags
+  needs: ["compile","check-style"]
 
 coverage:
   stage: test
@@ -69,6 +74,7 @@ coverage:
     - '[ -f target/site/jacoco/index.html ] && cat target/site/jacoco/index.html || echo "Total 0%"'
   except:
     - tags
+  needs: ["unit-test","integration-test"]
 
 qualitygate:
   stage: test
@@ -77,6 +83,7 @@ qualitygate:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS sonar:sonar'
   except:
     - tags
+  needs: ["unit-test","integration-test","coverage"]
 
 build:
   stage: build
@@ -86,6 +93,7 @@ build:
     - master
   except:
     - tags
+  needs: ["qualitygate"]
 
 artifactory:
   stage: artifact
@@ -95,3 +103,4 @@ artifactory:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS javadoc:jar javadoc:javadoc: source:jar deploy'
   only:
     - tags
+  needs: ["build"]
