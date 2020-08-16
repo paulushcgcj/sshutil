@@ -36,7 +36,7 @@ compile:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS clean compile'
   except:
     - tags
-  needs: ["validate"]
+  needs: []
 
 check-style:
   stage: validate
@@ -49,7 +49,7 @@ check-style:
     paths:
       - target/site/checkstyle.html
     expire_in: 4 days
-  needs: ["compile"]
+  needs: []
 
 unit-test:
   stage: test
@@ -74,7 +74,7 @@ coverage:
     - '[ -f target/site/jacoco/index.html ] && cat target/site/jacoco/index.html || echo "Total 0%"'
   except:
     - tags
-  needs: ["unit-test","integration-test"]
+  needs: ["compile","check-style"]
 
 qualitygate:
   stage: test
@@ -83,7 +83,7 @@ qualitygate:
     - 'mvn $MAVEN_OPTS $MAVEN_CLI_OPTS sonar:sonar'
   except:
     - tags
-  needs: ["unit-test","integration-test","coverage"]
+  needs: ["compile","check-style"]
 
 build:
   stage: build
